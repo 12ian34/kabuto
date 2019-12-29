@@ -1,5 +1,7 @@
 # kabuto
 
+Kaboodle ticket resale watcher
+
 ## Context
 
 **Kaboodle** is a service that sells tickets to events, mainly electronic music at Printworks in London. For some events where the tickets have sold out, a "Resale queue" is made active. If one would like to attend a sold out event with the resale queue active, they would need to keep entering the Resale queue link and hoping some tickets were made available since there is no notification option. 
