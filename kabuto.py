@@ -16,7 +16,7 @@ api_headers = {'package-id': '9261',
            'cookie': os.environ["KABOODLE_COOKIE"]
           }
 
-def count_ticket():
+def count_tickets():
     apiurl = api_url
     headers = api_headers
     response = requests.get(apiurl, allow_redirects=True, headers=headers)
