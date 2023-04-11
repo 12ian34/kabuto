@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "kabuto"
+version = "0.1.0"
+description = ""
+authors = []
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+requests = "*"
+twilio = "*"
+pydantic = "*"
+click = "*"
+
+[tool.poetry.dev-dependencies]
+pytest = "*"
+pytest-mock = "*"
+
+[tool.poetry.scripts]
+scan_for_tickets = "kabuto.main:scan"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
