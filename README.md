@@ -74,5 +74,3 @@ $ poetry run scan_for_tickets \
 ## Future work
 
 - get the right cookie and assign it to the relevant Environment Variable, automatically.
-- implement interactive function for setting Environment Variables according to the relevant Twilio and phone number details.
-- implement interactive function for choosing and setting the correct event ID.
