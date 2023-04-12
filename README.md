@@ -53,6 +53,12 @@ $ poetry run scan_for_tickets \
 --interval 180 \
 ```
 
+### Errors
+
+Symptom: `RuntimeError: Kaboodle responded with {'errors': [{'code': 404, 'message': 'Missing client_id from session'}]}`
+Cause: Kaboodle session detailed by `--kaboodle-cookie` was server-side invalidated. The specified `--interval` might be too long, the script was cancelled & restarted or the server forcefully invalidated the session.
+Solution: Revisit webpage & re-grab a refresh `Cookie`.
+
 ## Context
 
 **Kaboodle** is a service that sells tickets to events, mainly electronic music at Printworks in London. For some events where the tickets have sold out, a "Resale queue" is made active. If one would like to attend a sold out event with the resale queue active, they would need to keep entering the Resale queue link and hoping some tickets were made available since there is no notification option.
