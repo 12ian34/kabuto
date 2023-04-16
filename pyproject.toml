@@ -11,6 +11,7 @@ requests = "*"
 twilio = "*"
 pydantic = "*"
 click = "*"
+backoff = "*"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"

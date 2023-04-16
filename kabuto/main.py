@@ -1,11 +1,13 @@
 import functools
 import time
 import click
+import backoff
 from datetime import datetime
 from typing import Mapping, Optional, Sequence
 
 import requests
 from pydantic import parse_obj_as
+from twilio.http import TwilioException
 from twilio.rest import Client
 
 from kabuto._types import Ticket, TicketAvailabilityResponse
@@ -19,6 +21,8 @@ from kabuto.config import (ACCOUNT_SID, API_URL, AUTH_TOKEN,
 def get_twilio_client(account_sid: str, token: str) -> Client:
     return Client(account_sid, token)
 
+def get_requests_client() -> requests.Session:
+    return requests.Session()
 
 def build_headers(package_id: int, kaboodle_cookie: str) -> Mapping[str, str]:
     _package_id = str(package_id)
@@ -30,12 +34,13 @@ def build_headers(package_id: int, kaboodle_cookie: str) -> Mapping[str, str]:
     }
 
 
+@backoff.on_exception(backoff.expo, requests.exceptions.RequestException, max_tries=5)
 def get_response(
-    desired_package_id: int, kaboodle_cookie: str
+    client: requests.Session, desired_package_id: int, kaboodle_cookie: str
 ) -> TicketAvailabilityResponse:
     headers = build_headers(desired_package_id, kaboodle_cookie)
-    response = requests.get(API_URL, allow_redirects=True, headers=headers)
-    print(f"Reached Kaboodle at {str(datetime.now())}")
+    response = client.get(API_URL, allow_redirects=True, headers=headers)
+    print(f"Reached Kaboodle at {str(datetime.now())}", flush=True)
     if response.status_code != 200:
         raise RuntimeError(f"Kaboodle responded with {response.json()}")
 
@@ -47,18 +52,20 @@ def desirable(desire_all_flag: bool, desired_list: Sequence[int], item: Ticket) 
 
 
 def scan_for_tickets(
+    client: requests.Session,
     desired_package_id: int,
     desired_ticket_ids: Sequence[int],
     desire_all_tickets: bool,
     kaboodle_cookie: str,
 ) -> Sequence[Ticket]:
-    response = get_response(desired_package_id, kaboodle_cookie)
+    response = get_response(client, desired_package_id, kaboodle_cookie)
     desirable_ticket = functools.partial(
         desirable, desire_all_tickets, desired_ticket_ids
     )
     return list(filter(desirable_ticket, response.tickets))
 
 
+@backoff.on_exception(backoff.expo, TwilioException, max_tries=5)
 def notify(
     twilio_client: Client,
     tickets: Sequence[Ticket],
@@ -105,10 +112,11 @@ def scan(
         (kaboodle_cookie, f"{kaboodle_cookie=}"),
     ])
     twilio_client = get_twilio_client(twilio_sid, twilio_token)
+    kaboodle_client = get_requests_client()
     while True:
-        available_tickets = scan_for_tickets(package_id, wanted_ticket_id, desire_all, kaboodle_cookie)
+        available_tickets = scan_for_tickets(kaboodle_client, package_id, wanted_ticket_id, desire_all, kaboodle_cookie)
         messages = notify(twilio_client, available_tickets, package_id, my_number, twilio_number)
-        print(f"Sent {len(messages)} messages with SIDs {messages=} at {str(datetime.now())}")
+        print(f"Sent {len(messages)} messages with SIDs {messages=} at {str(datetime.now())}", flush=True)
         time.sleep(interval)
 
 

@@ -73,6 +73,14 @@ tests-no-zope = ["hypothesis", "pympler", "pytest (>=4.3.0)", "pytest-xdist", "c
 tests_no_zope = ["hypothesis", "pympler", "pytest (>=4.3.0)", "pytest-xdist", "cloudpickle", "mypy (>=0.971,<0.990)", "pytest-mypy-plugins"]
 
 [[package]]
+name = "backoff"
+version = "2.2.1"
+description = "Function decoration for backoff and retry"
+category = "main"
+optional = false
+python-versions = ">=3.7,<4.0"
+
+[[package]]
 name = "certifi"
 version = "2022.12.7"
 description = "Python package for providing Mozilla's CA Bundle."
@@ -318,7 +326,7 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "6bbb1753724ec37b1e71c7eba8d24e3efc57d486de0fa74dd2866193e1472b01"
+content-hash = "30efb0306a87e0dc995e93d825c272b8cde8ce5bef1c8ed54dc188110e8938c6"
 
 [metadata.files]
 aiohttp = []
@@ -327,6 +335,7 @@ aiosignal = []
 async-timeout = []
 asyncio = []
 attrs = []
+backoff = []
 certifi = []
 charset-normalizer = []
 click = [
